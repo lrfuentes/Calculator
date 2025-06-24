@@ -14,3 +14,85 @@ all_operators.forEach((item) => {
     operator.textContent = item;
     operators.appendChild(operator);
 });
+
+let firstNumber = 0.0;
+let secondNumber = 0.0;
+let operation = '';
+
+const calc = document.getElementById('calc');
+calc.addEventListener('keypress', calcListener);
+
+function calcListener(e){
+    if(!all_numbers.includes(e.key)){
+        e.preventDefault();
+    }
+    if(all_operators.includes(e.key)){
+        e.preventDefault();
+        operator(e.key);
+    }
+    if(e.key == '='){
+        operatorEqual();
+    }
+}
+
+function operator(key){
+    if(firstNumber == 0.0 && calc.value != null){
+        firstNumber = parseFloat(calc.value);
+        operation = key;
+        calc.value = '';
+    }
+    else if(secondNumber == 0.0 && calc.value != null){
+        //fix result value after operate
+        secondNumber = parseFloat(calc.value);
+        let tmp = operate(operation);
+        calc.value = tmp;
+        firstNumber = tmp;
+        secondNumber = 0.0;
+        operation = key;
+    }
+}
+
+function operate(oper){
+    switch (oper) {
+        case '/':
+            return divide(firstNumber, secondNumber);
+            break;
+        
+        case '*':
+            return multiply(firstNumber, secondNumber);
+            break;
+
+        case '-':
+            return subtract(firstNumber, secondNumber);
+            break;
+
+        case '+':
+            return add(firstNumber, secondNumber);
+            break;
+    
+        default:
+            break;
+    }
+}
+
+function operatorEqual(){
+    
+    calc.removeEventListener('keypress', calcListener);
+
+}
+
+function add(fnumb, lnum){
+    return parseFloat(fnumb) + parseFloat(lnum);
+}
+
+function subtract(fnumb, lnum){
+    return parseFloat(fnumb) - parseFloat(lnum);
+}
+
+function multiply(fnumb, lnum){
+    return parseFloat(fnumb) * parseFloat(lnum);
+}
+
+function divide(fnumb, lnum){
+    return parseFloat(fnumb) / parseFloat(lnum);
+}
