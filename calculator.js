@@ -5,6 +5,7 @@ const numbers = document.getElementById('numbers');
 all_numbers.forEach((item) => {
     let number = document.createElement('button');
     number.textContent = item;
+    number.addEventListener('click', buttonListener);
     numbers.appendChild(number);
 });
 
@@ -23,6 +24,11 @@ let new_number = true;
 const calc = document.getElementById('calc');
 calc.addEventListener('keypress', calcListener);
 
+/**
+ * 
+ * @param {object} e Object of keypress event
+ * @returns {void} Call functions to try keypress event
+ */
 function calcListener(e){
     if(!all_numbers.includes(e.key)){
         e.preventDefault();
@@ -39,9 +45,19 @@ function calcListener(e){
         operator(e.key);
     }
     if(e.key == '='){
+        e.preventDefault();
         new_number = true;
         operatorEqual();
     }
+}
+
+/**
+ * 
+ * @param {object} e Object of click event
+ * @returns {void} Call functions to try click event
+ */
+function buttonListener(e) {
+    console.log('a');
 }
 
 function operator(key){
@@ -84,23 +100,27 @@ function operate(oper){
 }
 
 function operatorEqual(){
-    
-    calc.removeEventListener('keypress', calcListener);
-
+    if(firstNumber != '' && calc.value != '' && operation != ''){
+        secondNumber = parseFloat(calc.value);
+        calc.value = operate(operation);
+        firstNumber = 0.0;
+        secondNumber = 0.0;
+        operation = '';
+    }
 }
 
-function add(fnumb, lnum){
-    return parseFloat(fnumb) + parseFloat(lnum);
+function add(fnumb, lnumb){
+    return parseFloat(fnumb) + parseFloat(lnumb);
 }
 
-function subtract(fnumb, lnum){
-    return parseFloat(fnumb) - parseFloat(lnum);
+function subtract(fnumb, lnumb){
+    return parseFloat(fnumb) - parseFloat(lnumb);
 }
 
-function multiply(fnumb, lnum){
-    return parseFloat(fnumb) * parseFloat(lnum);
+function multiply(fnumb, lnumb){
+    return parseFloat(fnumb) * parseFloat(lnumb);
 }
 
-function divide(fnumb, lnum){
-    return parseFloat(fnumb) / parseFloat(lnum);
+function divide(fnumb, lnumb){
+    return parseFloat(fnumb) / parseFloat(lnumb);
 }
