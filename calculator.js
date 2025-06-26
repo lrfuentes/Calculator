@@ -18,6 +18,7 @@ all_operators.forEach((item) => {
 let firstNumber = 0.0;
 let secondNumber = 0.0;
 let operation = '';
+let new_number = true;
 
 const calc = document.getElementById('calc');
 calc.addEventListener('keypress', calcListener);
@@ -26,11 +27,19 @@ function calcListener(e){
     if(!all_numbers.includes(e.key)){
         e.preventDefault();
     }
+    else{
+        if(e.key != '=' && calc.value != null && new_number){
+            calc.value = '';
+            new_number = false;
+        }
+    }
     if(all_operators.includes(e.key)){
+        new_number = true;
         e.preventDefault();
         operator(e.key);
     }
     if(e.key == '='){
+        new_number = true;
         operatorEqual();
     }
 }
@@ -42,7 +51,6 @@ function operator(key){
         calc.value = '';
     }
     else if(secondNumber == 0.0 && calc.value != null){
-        //fix result value after operate
         secondNumber = parseFloat(calc.value);
         let tmp = operate(operation);
         calc.value = tmp;
