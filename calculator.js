@@ -13,6 +13,7 @@ const operators = document.getElementById('operators');
 all_operators.forEach((item) => {
     let operator = document.createElement('button');
     operator.textContent = item;
+    operator.addEventListener('click', buttonListener);
     operators.appendChild(operator);
 });
 
@@ -57,7 +58,22 @@ function calcListener(e){
  * @returns {void} Call functions to try click event
  */
 function buttonListener(e) {
-    console.log('a');
+    if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML != '='){
+        if (!new_number) {
+            calc.value += e.target.innerHTML;
+        }
+        else{
+            calc.value = e.target.innerHTML;
+        }
+    }
+    else if(all_operators.includes(e.target.innerHTML)){
+        new_number = true;
+        operator(e.target.innerHTML);
+    }
+    else if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML == '='){
+        new_number = true;
+        operatorEqual();
+    }
 }
 
 function operator(key){
