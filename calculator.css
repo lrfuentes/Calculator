@@ -22,7 +22,6 @@
 }
 
 #buttons{
-    padding-top: 20px;
     display: flex;
     flex-wrap: nowrap;
 }
@@ -33,4 +32,9 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
+}
+
+#clears{
+    margin-left: auto;
+    padding-top: 15px;
 }

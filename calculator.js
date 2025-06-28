@@ -1,21 +1,28 @@
 const all_numbers = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '='];
 const all_operators = ['/', '*', '-', '+'];
+const all_clears = ['AC', 'DEL'];
 
 const numbers = document.getElementById('numbers');
 all_numbers.forEach((item) => {
-    let number = document.createElement('button');
-    number.textContent = item;
-    number.addEventListener('click', buttonListener);
-    numbers.appendChild(number);
+    createButton(item, buttonListener, numbers);
 });
 
 const operators = document.getElementById('operators');
 all_operators.forEach((item) => {
-    let operator = document.createElement('button');
-    operator.textContent = item;
-    operator.addEventListener('click', buttonListener);
-    operators.appendChild(operator);
+    createButton(item, buttonListener, operators);
 });
+
+const clears = document.getElementById('clears');
+all_clears.forEach((item) => {
+    createButton(item, buttonListener, clears);
+});
+
+function createButton(buttonText, functionName, parentObject){
+    let tmpButton = document.createElement('button');
+    tmpButton.textContent = buttonText;
+    tmpButton.addEventListener('click', functionName);
+    parentObject.appendChild(tmpButton);
+}
 
 let firstNumber = 0.0;
 let secondNumber = 0.0;
@@ -74,6 +81,9 @@ function buttonListener(e) {
         new_number = true;
         operatorEqual();
     }
+    else if(all_clears.includes(e.target.innerHTML)){
+        operate(e.target.innerHTML);
+    }
 }
 
 function operator(key){
@@ -96,19 +106,21 @@ function operate(oper){
     switch (oper) {
         case '/':
             return divide(firstNumber, secondNumber);
-            break;
         
         case '*':
             return multiply(firstNumber, secondNumber);
-            break;
 
         case '-':
             return subtract(firstNumber, secondNumber);
-            break;
 
         case '+':
             return add(firstNumber, secondNumber);
-            break;
+
+        case 'DEL':
+            return clearInput('DEL');
+
+        case 'AC':
+            return clearInput('AC');
     
         default:
             break;
@@ -139,4 +151,24 @@ function multiply(fnumb, lnumb){
 
 function divide(fnumb, lnumb){
     return parseFloat(fnumb) / parseFloat(lnumb);
+}
+
+function clearInput(type){
+    if(type == 'DEL'){
+        if(calc.value != ''){
+            let temp = calc.value.slice(0, calc.value.length - 1);
+            calc.value = temp;
+        }
+        if(calc.value == ''){
+            firstNumber = 0.0;
+            secondNumber = 0.0;
+            operation = ''; 
+        }
+    }
+    else if (type == 'AC') {
+        calc.value = '';
+        firstNumber = 0.0;
+        secondNumber = 0.0;
+        operation = ''; 
+    }
 }
