@@ -1,25 +1,26 @@
-const all_numbers = ['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '='];
+const all_numbers = ['7', '8', '9', '/', '4', '5', '6', '*', '1', '2', '3', '-', '.', '0', '=', '+'];
 const all_operators = ['/', '*', '-', '+'];
 const all_clears = ['AC', 'DEL'];
 
 const numbers = document.getElementById('numbers');
 all_numbers.forEach((item) => {
-    createButton(item, buttonListener, numbers);
+    (all_operators.includes(item)) ? createButton(item, buttonListener, numbers, 'operator') : createButton(item, buttonListener, numbers);
 });
 
-const operators = document.getElementById('operators');
+/*const operators = document.getElementById('operators');
 all_operators.forEach((item) => {
     createButton(item, buttonListener, operators);
-});
+});*/
 
 const clears = document.getElementById('clears');
 all_clears.forEach((item) => {
-    createButton(item, buttonListener, clears);
+    createButton(item, buttonListener, clears, 'clear');
 });
 
-function createButton(buttonText, functionName, parentObject){
+function createButton(buttonText, functionName, parentObject, listClass = ''){
     let tmpButton = document.createElement('button');
     tmpButton.textContent = buttonText;
+    (listClass != null) ? tmpButton.classList = listClass : '';
     tmpButton.addEventListener('click', functionName);
     parentObject.appendChild(tmpButton);
 }
@@ -41,17 +42,15 @@ function calcListener(e){
     if(!all_numbers.includes(e.key)){
         e.preventDefault();
     }
-    else{
-        if(e.key != '=' && calc.value != null && new_number){
-            calc.value = '';
-            new_number = false;
-        }
+    else if(e.key != '=' && calc.value != null && new_number){
+        calc.value = '';
+        new_number = false;
     }
-    if(all_operators.includes(e.key)){
+    /*if(all_operators.includes(e.key)){
         new_number = true;
         e.preventDefault();
         operator(e.key);
-    }
+    }*/
     if(e.key == '='){
         e.preventDefault();
         new_number = true;
