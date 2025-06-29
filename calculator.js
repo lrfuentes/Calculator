@@ -17,7 +17,6 @@ function createButton(buttonText, functionName, parentObject, listClass = null){
     tmpButton.textContent = buttonText;
     (listClass != null) ? tmpButton.classList = listClass : '';
     tmpButton.addEventListener('click', functionName);
-    tmpButton.addEventListener('click', changeListener);
     parentObject.appendChild(tmpButton);
 }
 
@@ -37,6 +36,9 @@ let new_number = true;
  */
 function calcListener(e){
     if(!all_numbers.includes(e.key)){
+        e.preventDefault();
+    }
+    else if(e.key == '.' && calc.value.includes('.')){
         e.preventDefault();
     }
     else if(e.key != '=' && calc.value != null && new_number && !all_operators.includes(e.key)){
@@ -63,18 +65,22 @@ function calcListener(e){
 function buttonListener(e) {
     if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML != '=' && !all_operators.includes(e.target.innerHTML)){
         if (!new_number) {
-            calc.value += e.target.innerHTML;
+            if(e.target.innerHTML != '.' || !calc.value.includes('.')){
+                calc.value += e.target.innerHTML;
+            }
         }
         else{
-            calc.value = e.target.innerHTML;
-            new_number = false;
+            if(e.target.innerHTML != '.'){
+                calc.value = e.target.innerHTML;
+                new_number = false;
+            }
         }
     }
     else if(all_operators.includes(e.target.innerHTML)){
         new_number = true;
         operator(e.target.innerHTML);
     }
-    else if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML == '=' && !all_operators.includes(e.target.innerHTML)){
+    else if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML == '='){
         new_number = true;
         operatorEqual();
     }
@@ -84,8 +90,8 @@ function buttonListener(e) {
 }
 
 function changeListener(e){
-    if (calc.value.length >= 22) {
-        let temp = calc.value.slice(0,22);
+    if (calc.value.length >= 20) {
+        let temp = calc.value.slice(0,20);
         calc.value = temp;
     }
 }
