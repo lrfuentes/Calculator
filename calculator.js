@@ -7,31 +7,28 @@ all_numbers.forEach((item) => {
     (all_operators.includes(item)) ? createButton(item, buttonListener, numbers, 'operator') : createButton(item, buttonListener, numbers);
 });
 
-/*const operators = document.getElementById('operators');
-all_operators.forEach((item) => {
-    createButton(item, buttonListener, operators);
-});*/
-
 const clears = document.getElementById('clears');
 all_clears.forEach((item) => {
     createButton(item, buttonListener, clears, 'clear');
 });
 
-function createButton(buttonText, functionName, parentObject, listClass = ''){
+function createButton(buttonText, functionName, parentObject, listClass = null){
     let tmpButton = document.createElement('button');
     tmpButton.textContent = buttonText;
     (listClass != null) ? tmpButton.classList = listClass : '';
     tmpButton.addEventListener('click', functionName);
+    tmpButton.addEventListener('click', changeListener);
     parentObject.appendChild(tmpButton);
 }
 
-let firstNumber = 0.0;
-let secondNumber = 0.0;
-let operation = '';
-let new_number = true;
-
 const calc = document.getElementById('calc');
 calc.addEventListener('keypress', calcListener);
+calc.addEventListener('input', changeListener);
+
+let firstNumber = 0.0;
+let secondNumber = 0.0;
+let operation = null;
+let new_number = true;
 
 /**
  * 
@@ -42,15 +39,15 @@ function calcListener(e){
     if(!all_numbers.includes(e.key)){
         e.preventDefault();
     }
-    else if(e.key != '=' && calc.value != null && new_number){
-        calc.value = '';
+    else if(e.key != '=' && calc.value != null && new_number && !all_operators.includes(e.key)){
+        calc.value = null;
         new_number = false;
     }
-    /*if(all_operators.includes(e.key)){
+    if(all_operators.includes(e.key)){
         new_number = true;
         e.preventDefault();
         operator(e.key);
-    }*/
+    }
     if(e.key == '='){
         e.preventDefault();
         new_number = true;
@@ -64,19 +61,20 @@ function calcListener(e){
  * @returns {void} Call functions to try click event
  */
 function buttonListener(e) {
-    if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML != '='){
+    if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML != '=' && !all_operators.includes(e.target.innerHTML)){
         if (!new_number) {
             calc.value += e.target.innerHTML;
         }
         else{
             calc.value = e.target.innerHTML;
+            new_number = false;
         }
     }
     else if(all_operators.includes(e.target.innerHTML)){
         new_number = true;
         operator(e.target.innerHTML);
     }
-    else if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML == '='){
+    else if(all_numbers.includes(e.target.innerHTML) && e.target.innerHTML == '=' && !all_operators.includes(e.target.innerHTML)){
         new_number = true;
         operatorEqual();
     }
@@ -85,18 +83,27 @@ function buttonListener(e) {
     }
 }
 
+function changeListener(e){
+    if (calc.value.length >= 22) {
+        let temp = calc.value.slice(0,22);
+        calc.value = temp;
+    }
+}
+
 function operator(key){
-    if(firstNumber == 0.0 && calc.value != null){
+    if(firstNumber == 0.0 && calc.value.length != 0){
         firstNumber = parseFloat(calc.value);
         operation = key;
-        calc.value = '';
+        calc.value = null;
     }
-    else if(secondNumber == 0.0 && calc.value != null){
+    else if(secondNumber == 0.0 && calc.value.length != 0){
         secondNumber = parseFloat(calc.value);
-        let tmp = operate(operation);
-        calc.value = tmp;
-        firstNumber = tmp;
+        calc.value = operate(operation);
+        firstNumber = parseFloat(calc.value);
         secondNumber = 0.0;
+        operation = key;
+    }
+    else{
         operation = key;
     }
 }
@@ -127,12 +134,13 @@ function operate(oper){
 }
 
 function operatorEqual(){
-    if(firstNumber != '' && calc.value != '' && operation != ''){
+    if(firstNumber != null && calc.value != null && operation != null){
         secondNumber = parseFloat(calc.value);
         calc.value = operate(operation);
         firstNumber = 0.0;
         secondNumber = 0.0;
-        operation = '';
+        operation = null;
+        new_number = false;
     }
 }
 
@@ -149,25 +157,35 @@ function multiply(fnumb, lnumb){
 }
 
 function divide(fnumb, lnumb){
+    if (lnumb == 0) {
+        window.alert('Division by zero is not possible');
+        lnumb = 1;
+    }
+    if(fnumb == 0){
+        return 1;
+    }
     return parseFloat(fnumb) / parseFloat(lnumb);
 }
 
 function clearInput(type){
     if(type == 'DEL'){
-        if(calc.value != ''){
+        if(calc.value != null){
             let temp = calc.value.slice(0, calc.value.length - 1);
             calc.value = temp;
         }
-        if(calc.value == ''){
+        if(calc.value == null){
             firstNumber = 0.0;
             secondNumber = 0.0;
-            operation = ''; 
+            operation = null; 
         }
     }
     else if (type == 'AC') {
-        calc.value = '';
-        firstNumber = 0.0;
-        secondNumber = 0.0;
-        operation = ''; 
+        let confirm = window.confirm("Are you sure you want to clear this item?");
+        if (confirm) {
+            calc.value = null;
+            firstNumber = 0.0;
+            secondNumber = 0.0;
+            operation = null;
+        } 
     }
 }
